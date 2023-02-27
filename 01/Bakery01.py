@@ -27,7 +27,7 @@ def bakery_process(i: int):
         # process wants to enter critical section
         while intr[j] == 1:
             continue
-        # process waits for its turn
+        # process has to wait for its turn
         while (num[j] != 0) and (num[j] < num[i] or (num[j] == num[i] and j < i)):
             continue
 
