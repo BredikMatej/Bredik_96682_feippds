@@ -1,5 +1,7 @@
 """
-Program represents different sequences of using mutex
+This is implementation of solution to barbershop (sleeping barber) problem using fei.ppds package
+
+
 University: STU Slovak Technical University in Bratislava
 Faculty: FEI Faculty of Electrical Engineering and Information Technology
 Year: 2023
@@ -17,7 +19,6 @@ from random import randint
 class Shared(object):
 
     def __init__(self):
-        # TODO : Initialize patterns we need and variables
         self.mutex = Mutex()
         self.waiting_room = 0
         self.customer = Semaphore(0)
@@ -27,55 +28,76 @@ class Shared(object):
 
 
 def get_haircut(i):
-    # TODO: Simulate time and print info when customer gets haircut
+    """Simulates customer getting their hair cut by barber"""
     print(f'CUSTOMER {i}: gets haircut')
-    sleep(1 / 10)
+    sleep(1 / 5)
 
 
 def cut_hair():
-    # TODO: Simulate time and print info when barber cuts customer's hair
+    """Simulates time when barber cuts customer's hair"""
     print('BARBER: cuts hair')
-    sleep(1 / 10)
+    sleep(1 / 5)
 
 
 def balk(i):
-    # TODO: Represents situation when waiting room is full and print info
+    """Simulates situation when waiting room is full."""
     print(f'CUSTOMER {i}: Waits for an empty seat')
     sleep(1)
 
 
 def growing_hair(i):
-    # TODO: Represents situation when customer wait after getting haircut. So hair is growing and customer is
-    #  sleeping for some time
-    print(f'CUSTOMER {i}: Waits for hair to grow')
-    sleep(1)
+    """Represents situation when customer wait after getting haircut."""
+    print(f'CUSTOMER {i}: Leaves and waits for hair to grow')
+    sleep(2)
 
 
 def customer(i, shared):
-    # TODO: Function represents customers behaviour. Customer come to waiting if room is full sleep.
-    # TODO: Wake up barber and waits for invitation from barber. Then gets new haircut.
-    # TODO: After it both wait to complete their work. At the end waits to hair grow again
-
     while True:
-        # TODO: Access to waiting room. Could customer enter or must wait? Be careful about counter integrity :)
+        if shared.waiting_room < N:
+            shared.mutex.lock()
+            shared.waiting_room += 1
+            print(f'CUSTOMER {i}: Sitting in waiting room')
+            shared.mutex.unlock()
 
-        # TODO: Rendezvous 1
-        get_haircut(i)
-        # TODO: Rendezvous 2
+            # Customer signals barber that he is ready for haircut and waits
+            shared.customer.signal()
+            shared.barber.wait()
 
-        # TODO: Leave waiting room. Integrity again
-        growing_hair(i)
+            # Customer gets his hair cut by barber
+            get_haircut(i)
+
+            # Customer is done, signals barber and waits
+            shared.customer_done.signal()
+            shared.barber_done.wait()
+
+            # Customer is leaving the waiting room
+            shared.mutex.lock()
+            shared.waiting_room -= 1
+            shared.mutex.unlock()
+
+            # Customer waits for his hair to grow
+            growing_hair(i)
+        else:
+            # Waiting room is full customer leaves
+            balk(i)
+            continue
 
 
 def barber(shared):
-    # TODO: Function barber represents barber. Barber is sleeping.
-    # TODO: When customer come to get new hair wakes up barber.
-    # TODO: Barber cuts customer hair and both wait to complete their work.
 
     while True:
-        # TODO: Rendezvous 1
+        # Barber waits for customer to arrive
+        shared.customer.wait()
+
+        # Barber waits for customer to come in
+        shared.barber.signal()
+
+        # Barber cuts customers hair
         cut_hair()
-        # TODO: Rendezvous 2
+
+        # Barber is done signals customer and waits for customer to leave
+        shared.barber_done.signal()
+        shared.customer_done.wait()
 
 
 def main():
