@@ -3,7 +3,13 @@
 The barbershop problem is a classic synchronization problem in parallel programming
 that involves managing a set of resources that are shared among multiple threads 
 or processes. The problem is based on a hypothetical scenario in which a barber 
-operates a barbershop with a limited number of chairs for waiting customers.
+operates a barbershop with a limited number of chairs for waiting customers. 
+The barbershop problem involves two main complications. Firstly, there is a 
+possibility of a race condition occurring when the barber falls asleep while a 
+customer is waiting to get a haircut. Secondly, there is a potential issue when two
+customers arrive simultaneously, and there is only one available seat in the waiting 
+room, causing a conflict over who gets to sit in the seat, as only one customer can 
+occupy the chair at a time.[1,2]
 
 ## How to run
 All you need to successfully run this implementation is to install fei.ppds package for python like so:  
@@ -26,3 +32,9 @@ they are ready to get a haircut, and the barber signals the customer when they a
 their haircut. These signals are implemented using `semaphores`.  
 The `mutex lock` is used to ensure that only one customer at a time can modify the waiting_room variable.
 
+## Output
+![alt text](https://i.imgur.com/aqeginj.png)
+
+## Sources
+[1] https://www.geeksforgeeks.org/sleeping-barber-problem-in-process-synchronization/  
+[2] https://en.wikipedia.org/wiki/Sleeping_barber_problem
