@@ -13,12 +13,12 @@ __license__ = "MIT"
 
 from fei.ppds import Mutex, Thread, Semaphore, print
 from time import sleep
-from random import randint
 
 
 class Shared(object):
 
     def __init__(self):
+        """Class representing shared data between threads."""
         self.mutex = Mutex()
         self.waiting_room = 0
         self.customer = Semaphore(0)
@@ -28,7 +28,7 @@ class Shared(object):
 
 
 def get_haircut(i):
-    """Simulates customer getting their hair cut by barber"""
+    """    Simulates customer getting their hair cut by barber"""
     print(f'CUSTOMER {i}: gets haircut')
     sleep(1/10)
 
@@ -52,8 +52,16 @@ def growing_hair(i):
 
 
 def customer(i, shared):
+    """Function representing the customer thread.
+
+    Arguments:
+        i -- thread id
+        shared -- shared data between threads
+    """
     while True:
+        # Customer arrives and tries to enter waiting room
         if shared.waiting_room < N:
+            # increase the number of customers in the waiting room
             shared.mutex.lock()
             shared.waiting_room += 1
             print(f'CUSTOMER {i}: Sitting in waiting room')
@@ -84,7 +92,11 @@ def customer(i, shared):
 
 
 def barber(shared):
+    """Function representing the barber thread.
 
+    Arguments:
+        shared -- shared data between threads
+    """
     while True:
         # Barber waits for customer to arrive
         shared.customer.wait()
