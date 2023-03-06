@@ -30,25 +30,25 @@ class Shared(object):
 def get_haircut(i):
     """Simulates customer getting their hair cut by barber"""
     print(f'CUSTOMER {i}: gets haircut')
-    sleep(1 / 5)
+    sleep(1/10)
 
 
 def cut_hair():
     """Simulates time when barber cuts customer's hair"""
     print('BARBER: cuts hair')
-    sleep(1 / 5)
+    sleep(1/20)
 
 
 def balk(i):
     """Simulates situation when waiting room is full."""
     print(f'CUSTOMER {i}: Waits for an empty seat')
-    sleep(1)
+    sleep(1 / 5)
 
 
 def growing_hair(i):
     """Represents situation when customer wait after getting haircut."""
     print(f'CUSTOMER {i}: Leaves and waits for hair to grow')
-    sleep(2)
+    sleep(1 / 5)
 
 
 def customer(i, shared):
