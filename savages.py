@@ -1,5 +1,5 @@
 """
-This is implementation of solution to dinning savages problem using fei.ppds package
+This is implementation of solution to dining savages problem using fei.ppds package
 
 University: STU Slovak Technical University in Bratislava
 Faculty: FEI Faculty of Electrical Engineering and Information Technology
@@ -121,7 +121,7 @@ def main():
         t.join()
 
 
-D = 12
+D = 10
 H = 5
 
 if __name__ == "__main__":
