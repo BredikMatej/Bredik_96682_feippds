@@ -1,11 +1,56 @@
 # Assignment 05 - CUDA
 ## About assignment
-
+CUDA (Compute Unified Device Architecture) is a parallel computing platform and programming model created by NVIDIA.
+CUDA enables developers to use the power of NVIDIA GPUs for general-purpose computing tasks, rather than being 
+limited to graphics-related calculations. CUDA provides a programming model and a set of tools that allow developers 
+to write high-performance parallel code for GPUs. It allows for massive parallelism by utilizing hundreds or even 
+thousands of cores available on modern GPUs. This parallelism can significantly accelerate computationally intensive 
+tasks, such as scientific simulations, data analysis, machine learning, and image processing.
+ 
+The goal of our assignment was to load images in jpg format, convert them to grayscale using GPU and CPU method, save 
+the converted images to new files, and compare the conversion times.[1,2]
 ## How to run
+All you need to successfully run this implementation is to install Numba from which you will need cuda, install NumPy 
+and matplotlib.
+This can be done by running `pip install numba`, `pip install numpy` and `pip install matplotlib` in the terminal.
+Check if you have CUDA installed by running `nvcc --version` in the terminal. This command should display the 
+CUDA version if it's installed. If CUDA is not installed, you can download and install it from the NVIDIA website
+(https://developer.nvidia.com/cuda-downloads). We used `release 11.8`. 
+If you're using PyCharm you should also Edit environment variables and add `NUMBA_ENABLE_CUDASIM` and set it to 
+value `1`.
+Finally, in command line write `set NUMBA_ENABLE_CUDASIM=1` on Windows and `export NUMBA_ENABLE_CUDASIM=1` on Linux.
 
 ## Implementation
+This module provides implementations of grayscale conversion using both CPU and GPU methods, allowing for a 
+performance comparison between the two.  
+The functions for grayscale conversions are `transform_to_grayscale_cpu` and `transform_to_grayscale_cuda`. Both 
+functions use "luminosity method". It calculates the grayscale intensity of each pixel based on the weighted average 
+of its red, green, and blue color channels. The formula for conversion is `0.21 * red + 0.72 * green + 0.07 * blue` 
+which should be specifically formula BT.709 according to [3]. While both of these functions do the same 
+`transform_to_grayscale_cuda` is a CUDA kernel, and it utilizes parallel execution to process multiple pixels 
+simultaneously. The CUDA kernel is invoked using specific grid and block dimensions to distribute the workload 
+across the GPU cores efficiently.   
+The `transform_to_grayscale` function acts as a wrapper that invokes the CUDA kernel for grayscale conversion. 
+It sets up the necessary data structures, transfers the image data to the GPU memory, launches the CUDA kernel,
+and retrieves the grayscale image back to the CPU memory. 
+The `zad` function demonstrates the usage of both CPU and GPU grayscale conversion methods. It loads an image, 
+performs grayscale conversion using the CPU and the GPU implementation, measures the both execution times, and saves 
+both grayscale images. This allows for a comparison of the execution times between the CPU and GPU approaches. [1,2,3]
+
+During testing, we created grayscale conversions of different images to evaluate the methods. 
+Here are examples of the original images and their grayscale versions.
+
+<img src="https://i.imgur.com/jVIHyp8.jpeg" width="500"  alt="house"/> <img src="https://i.imgur.com/7JVaiIg.jpeg" width="500"  alt="gray house"/>
+<img src="https://i.imgur.com/cP5w3in.jpeg" width="500"  alt="dog"/> <img src="https://i.imgur.com/TYwRWFr.jpeg" width="500"  alt="gray dog"/>
+<img src="https://i.imgur.com/y5Ln2BP.jpeg" width="500"  alt="car"/> <img src="https://i.imgur.com/7mjkYH0.jpeg" width="500"  alt="gray car"/>
+
 
 ## Testing
+When testing this implementation we used multiple images of different sizes. The minimum `Image size`we tested was 
+200x200, while the maximum value was 8000x8000. The shortest time for CPU conversion was 0.001s and the longest was 
+0.921035s. For GPU the time varied anywhere from 0.196227s to 0.321052s. You can see all the different image sizes and 
+their respective conversion times in the table below.
+
 | Num | Image size | CPU time  | GPU time |
 |-----|------------|-----------|----------|
 | 1.  | 480x400    | 0.003999  | 0.213853 |
@@ -29,17 +74,26 @@
 | 19. | 8000x8000  | 0.921035  | 0.321052 |
 | 20. | 400x400    | 0.002750  | 0.209961 |
 
+And these were the Average times
 
-Minimum values:
-
-Image size: 200x200
-CPU time: 0.001
-GPU time: 0.196227
-
-Maximum values:
-
-Image size: 8000x8000, CPU time: 0.921035, GPU time: 0.321052
-
-| Average CPU time | Average CPU time |
+| Average CPU time | Average GPU time |
 |------------------|------------------|
 | 0.0676549        | 0.2316787        | 
+
+## Conclusion
+While testing both grayscale implementations on multiple images showed us that average CPU time of conversion is faster 
+than the average GPU time, we could observe that when the image size was larger, the GPU implementation using CUDA 
+started to showcase its advantage by outperforming the CPU implementation. 
+
+In conclusion, utilizing CUDA and GPU computing can offer substantial speed advantages over traditional CPU-based 
+implementations for large-scale image processing.
+
+
+## Sources - documentation
+[1] https://blogs.nvidia.com/blog/2012/09/10/what-is-cuda-2/  
+[2] https://chat.openai.com  
+[3] https://tannerhelland.com/2011/10/01/grayscale-image-algorithm-vb6.html  
+## Sources - code
+https://nyu-cds.github.io/python-numba/05-cuda/  
+https://blog.finxter.com/how-to-convert-an-image-from-rgb-to-grayscale-in-python/  
+https://chat.openai.com  
